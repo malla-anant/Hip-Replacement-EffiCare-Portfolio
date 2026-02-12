@@ -16,7 +16,7 @@
             margin: auto;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        input, select {
+        input {
             width: 100%;
             padding: 8px;
             margin: 8px 0;
@@ -28,9 +28,6 @@
             border: none;
             cursor: pointer;
         }
-        button:hover {
-            background: #0056b3;
-        }
         .result {
             margin-top: 20px;
             padding: 15px;
@@ -41,8 +38,8 @@
             margin-top: 20px;
             padding: 15px;
             background: #fdecea;
-            border-radius: 5px;
             color: red;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -82,10 +79,10 @@
     {% if prediction %}
     <div class="result">
         <h3>Prediction Results:</h3>
-        <p><strong>Length of Stay:</strong> {{ prediction.Predicted_Length_of_Stay }}</p>
-        <p><strong>Estimated Cost:</strong> {{ prediction.Predicted_Cost }}</p>
-        <p><strong>Readmission Probability:</strong> {{ prediction.Readmission_Risk_Probability }}</p>
-        <p><strong>Risk Level:</strong> {{ prediction.Readmission_Risk_Level }}</p>
+        <p><strong>Length of Stay:</strong> {{ prediction.length_of_stay }}</p>
+        <p><strong>Estimated Cost:</strong> ₹ {{ prediction.estimated_cost }}</p>
+        <p><strong>Readmission Probability:</strong> {{ prediction.readmission_probability }}</p>
+        <p><strong>Risk Level:</strong> {{ prediction.risk_level }}</p>
     </div>
     {% endif %}
 
@@ -94,7 +91,6 @@
         <strong>Error:</strong> {{ error }}
     </div>
     {% endif %}
-
 </div>
 
 </body>

@@ -3,16 +3,11 @@ from src.inference_pipeline import PredictionPipeline
 import logging
 import os
 
-# ---------------------------------------------------
-# App Initialization
-# ---------------------------------------------------
-
 app = Flask(__name__)
 
 # ---------------------------------------------------
-# Create Logs Folder (Safe for Deployment)
+# Logging
 # ---------------------------------------------------
-
 os.makedirs("logs", exist_ok=True)
 
 logging.basicConfig(
@@ -22,40 +17,28 @@ logging.basicConfig(
 )
 
 # ---------------------------------------------------
-# Load Prediction Pipeline Once
+# Load Model Pipeline ONCE
 # ---------------------------------------------------
-
 pipeline = PredictionPipeline()
 
 # ---------------------------------------------------
-# Home Page (Web UI)
+# Home Page
 # ---------------------------------------------------
-
 @app.route("/", methods=["GET"])
 def home():
     return render_template("index.html")
 
-
 # ---------------------------------------------------
-# API Endpoint (For Postman / External Use)
+# API Endpoint (JSON)
 # ---------------------------------------------------
-
 @app.route("/predict", methods=["POST"])
 def predict_api():
     try:
         data = request.get_json()
-
         if not data:
-            return jsonify({
-                "status": "error",
-                "message": "No JSON input provided"
-            }), 400
-
-        logging.info(f"API Input: {data}")
+            return jsonify({"error": "No input data"}), 400
 
         result = pipeline.predict(data)
-
-        logging.info(f"API Prediction: {result}")
 
         return jsonify({
             "status": "success",
@@ -63,26 +46,19 @@ def predict_api():
         })
 
     except Exception as e:
-        logging.error(f"API Error: {str(e)}")
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 500
-
+        logging.error(str(e))
+        return jsonify({"error": str(e)}), 500
 
 # ---------------------------------------------------
-# Web Form Submission
+# Web Prediction
 # ---------------------------------------------------
-
 @app.route("/web-predict", methods=["POST"])
 def web_predict():
     try:
         data = request.form.to_dict()
 
-        logging.info(f"Web Input (Raw): {data}")
-
-        # Convert numeric fields safely
-        numeric_int_fields = [
+        # Convert numeric fields
+        int_fields = [
             "discharge_year",
             "ccs_diagnosis_code",
             "ccs_procedure_code",
@@ -91,34 +67,24 @@ def web_predict():
             "apr_severity_of_illness_code"
         ]
 
-        numeric_float_fields = [
-            "total_charges"
-        ]
+        float_fields = ["total_charges"]
 
-        for field in numeric_int_fields:
-            if field in data and data[field] != "":
-                data[field] = int(data[field])
+        for f in int_fields:
+            if f in data and data[f]:
+                data[f] = int(data[f])
 
-        for field in numeric_float_fields:
-            if field in data and data[field] != "":
-                data[field] = float(data[field])
-
-        logging.info(f"Web Input (Processed): {data}")
+        for f in float_fields:
+            if f in data and data[f]:
+                data[f] = float(data[f])
 
         result = pipeline.predict(data)
-
-        logging.info(f"Web Prediction: {result}")
 
         return render_template("index.html", prediction=result)
 
     except Exception as e:
-        logging.error(f"Web Error: {str(e)}")
+        logging.error(str(e))
         return render_template("index.html", error=str(e))
 
-
-# ---------------------------------------------------
-# Main
-# ---------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=False)
