@@ -1,7 +1,10 @@
 flask
-pandas
-numpy
-scikit-learn==1.2.2
-joblib
 gunicorn
+pandas==2.1.4
+
+numpy==1.24.4
+scipy==1.10.1
+scikit-learn==1.2.2
+
+joblib
 xgboost
