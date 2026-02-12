@@ -1,7 +1,7 @@
-# ML artifacts
-artifacts/
-*.pkl
-*.joblib
+# # ML artifacts
+# artifacts/
+# *.pkl
+# *.joblib
 
 # Python cache
 __pycache__/
