@@ -1,0 +1,19 @@
+# ML artifacts
+artifacts/
+*.pkl
+*.joblib
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.venv
+env/
+
+# Logs
+logs/
+
+# Raw data
+data/raw/

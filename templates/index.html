@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EffiCare ML Prediction</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f6f9;
+            padding: 40px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 70%;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        button {
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9f7ef;
+            border-radius: 5px;
+        }
+        .error {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fdecea;
+            border-radius: 5px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>EffiCare: Hip Replacement Prediction</h2>
+
+    <form action="/web-predict" method="POST">
+
+        <input name="health_service_area" placeholder="Health Service Area" required>
+        <input name="hospital_county" placeholder="Hospital County" required>
+        <input name="age_group" placeholder="Age Group" required>
+        <input name="zip_code_3_digits" placeholder="ZIP Code (3 digits)" required>
+        <input name="gender" placeholder="Gender" required>
+        <input name="race" placeholder="Race" required>
+        <input name="ethnicity" placeholder="Ethnicity" required>
+        <input name="type_of_admission" placeholder="Admission Type" required>
+        <input name="discharge_year" placeholder="Discharge Year" required>
+        <input name="ccs_diagnosis_code" placeholder="Diagnosis Code" required>
+        <input name="ccs_diagnosis_description" placeholder="Diagnosis Description" required>
+        <input name="ccs_procedure_code" placeholder="Procedure Code" required>
+        <input name="ccs_procedure_description" placeholder="Procedure Description" required>
+        <input name="apr_drg_code" placeholder="APR DRG Code" required>
+        <input name="apr_drg_description" placeholder="APR DRG Description" required>
+        <input name="apr_mdc_code" placeholder="APR MDC Code" required>
+        <input name="apr_mdc_description" placeholder="APR MDC Description" required>
+        <input name="apr_severity_of_illness_code" placeholder="Severity Code" required>
+        <input name="apr_severity_of_illness_description" placeholder="Severity Description" required>
+        <input name="apr_risk_of_mortality" placeholder="Risk of Mortality" required>
+        <input name="apr_medical_surgical_description" placeholder="Medical/Surgical" required>
+        <input name="total_charges" placeholder="Total Charges" required>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction %}
+    <div class="result">
+        <h3>Prediction Results:</h3>
+        <p><strong>Length of Stay:</strong> {{ prediction.Predicted_Length_of_Stay }}</p>
+        <p><strong>Estimated Cost:</strong> {{ prediction.Predicted_Cost }}</p>
+        <p><strong>Readmission Probability:</strong> {{ prediction.Readmission_Risk_Probability }}</p>
+        <p><strong>Risk Level:</strong> {{ prediction.Readmission_Risk_Level }}</p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="error">
+        <strong>Error:</strong> {{ error }}
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>
