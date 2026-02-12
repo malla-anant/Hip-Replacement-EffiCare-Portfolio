@@ -22,20 +22,23 @@
             margin: 8px 0;
         }
         button {
-            padding: 10px;
+            padding: 10px 20px;
             background: #007BFF;
             color: white;
             border: none;
             cursor: pointer;
         }
+        button:hover {
+            background: #0056b3;
+        }
         .result {
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 15px;
             background: #e9f7ef;
             border-radius: 5px;
         }
         .error {
-            margin-top: 20px;
+            margin-top: 25px;
             padding: 15px;
             background: #fdecea;
             color: red;
@@ -43,10 +46,11 @@
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>EffiCare: Hip Replacement Prediction</h2>
+    <h2>EffiCare – Hip Replacement Prediction</h2>
 
     <form action="/web-predict" method="POST">
 
@@ -58,29 +62,33 @@
         <input name="race" placeholder="Race" required>
         <input name="ethnicity" placeholder="Ethnicity" required>
         <input name="type_of_admission" placeholder="Admission Type" required>
-        <input name="discharge_year" placeholder="Discharge Year" required>
-        <input name="ccs_diagnosis_code" placeholder="Diagnosis Code" required>
+
+        <input name="discharge_year" type="number" placeholder="Discharge Year" required>
+        <input name="ccs_diagnosis_code" type="number" placeholder="Diagnosis Code" required>
         <input name="ccs_diagnosis_description" placeholder="Diagnosis Description" required>
-        <input name="ccs_procedure_code" placeholder="Procedure Code" required>
+        <input name="ccs_procedure_code" type="number" placeholder="Procedure Code" required>
         <input name="ccs_procedure_description" placeholder="Procedure Description" required>
-        <input name="apr_drg_code" placeholder="APR DRG Code" required>
+
+        <input name="apr_drg_code" type="number" placeholder="APR DRG Code" required>
         <input name="apr_drg_description" placeholder="APR DRG Description" required>
-        <input name="apr_mdc_code" placeholder="APR MDC Code" required>
+        <input name="apr_mdc_code" type="number" placeholder="APR MDC Code" required>
         <input name="apr_mdc_description" placeholder="APR MDC Description" required>
-        <input name="apr_severity_of_illness_code" placeholder="Severity Code" required>
+
+        <input name="apr_severity_of_illness_code" type="number" placeholder="Severity Code" required>
         <input name="apr_severity_of_illness_description" placeholder="Severity Description" required>
         <input name="apr_risk_of_mortality" placeholder="Risk of Mortality" required>
         <input name="apr_medical_surgical_description" placeholder="Medical/Surgical" required>
-        <input name="total_charges" placeholder="Total Charges" required>
+
+        <input name="total_charges" type="number" step="0.01" placeholder="Total Charges" required>
 
         <button type="submit">Predict</button>
     </form>
 
     {% if prediction %}
     <div class="result">
-        <h3>Prediction Results:</h3>
+        <h3>Prediction Results</h3>
         <p><strong>Length of Stay:</strong> {{ prediction.length_of_stay }}</p>
-        <p><strong>Estimated Cost:</strong> ₹ {{ prediction.estimated_cost }}</p>
+        <p><strong>Estimated Cost:</strong> {{ prediction.estimated_cost }}</p>
         <p><strong>Readmission Probability:</strong> {{ prediction.readmission_probability }}</p>
         <p><strong>Risk Level:</strong> {{ prediction.risk_level }}</p>
     </div>
@@ -91,6 +99,7 @@
         <strong>Error:</strong> {{ error }}
     </div>
     {% endif %}
+
 </div>
 
 </body>

@@ -3,10 +3,13 @@ from src.inference_pipeline import PredictionPipeline
 import logging
 import os
 
+# ---------------------------------------------------
+# App Initialization
+# ---------------------------------------------------
 app = Flask(__name__)
 
 # ---------------------------------------------------
-# Logging
+# Logging (Safe for Render)
 # ---------------------------------------------------
 os.makedirs("logs", exist_ok=True)
 
@@ -17,7 +20,7 @@ logging.basicConfig(
 )
 
 # ---------------------------------------------------
-# Load Model Pipeline ONCE
+# Load ML Pipeline ONCE
 # ---------------------------------------------------
 pipeline = PredictionPipeline()
 
@@ -29,35 +32,16 @@ def home():
     return render_template("index.html")
 
 # ---------------------------------------------------
-# API Endpoint (JSON)
-# ---------------------------------------------------
-@app.route("/predict", methods=["POST"])
-def predict_api():
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No input data"}), 400
-
-        result = pipeline.predict(data)
-
-        return jsonify({
-            "status": "success",
-            "prediction": result
-        })
-
-    except Exception as e:
-        logging.error(str(e))
-        return jsonify({"error": str(e)}), 500
-
-# ---------------------------------------------------
-# Web Prediction
+# Web Form Prediction
 # ---------------------------------------------------
 @app.route("/web-predict", methods=["POST"])
 def web_predict():
     try:
         data = request.form.to_dict()
 
-        # Convert numeric fields
+        logging.info(f"Web Input Raw: {data}")
+
+        # Convert numeric values
         int_fields = [
             "discharge_year",
             "ccs_diagnosis_code",
@@ -69,22 +53,40 @@ def web_predict():
 
         float_fields = ["total_charges"]
 
-        for f in int_fields:
-            if f in data and data[f]:
-                data[f] = int(data[f])
+        for field in int_fields:
+            data[field] = int(data[field])
 
-        for f in float_fields:
-            if f in data and data[f]:
-                data[f] = float(data[f])
+        for field in float_fields:
+            data[field] = float(data[field])
 
-        result = pipeline.predict(data)
+        prediction = pipeline.predict(data)
 
-        return render_template("index.html", prediction=result)
+        return render_template(
+            "index.html",
+            prediction=prediction
+        )
 
     except Exception as e:
-        logging.error(str(e))
-        return render_template("index.html", error=str(e))
+        logging.error(f"Prediction Error: {str(e)}")
+        return render_template(
+            "index.html",
+            error=str(e)
+        )
 
+# ---------------------------------------------------
+# API Endpoint (Optional)
+# ---------------------------------------------------
+@app.route("/predict", methods=["POST"])
+def predict_api():
+    try:
+        data = request.get_json()
+        result = pipeline.predict(data)
+        return jsonify({"status": "success", "prediction": result})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
+# ---------------------------------------------------
+# Main
+# ---------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(host="0.0.0.0", port=5000)
